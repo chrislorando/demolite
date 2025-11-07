@@ -41,6 +41,11 @@ document.addEventListener('DOMContentLoaded', function() {
     addCopyButtonsToCodeBlocks();
 });
 
+// Watch for Livewire navigation
+document.addEventListener('livewire:navigated', function() {
+    addCopyButtonsToCodeBlocks();
+});
+
 // Also watch for dynamically added content (from Livewire streams)
 const observer = new MutationObserver(function() {
     addCopyButtonsToCodeBlocks();
