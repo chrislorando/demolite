@@ -8,14 +8,14 @@ use Illuminate\Support\Collection;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
-class ChatBotAiResponse extends Component
+class BotAiResponse extends Component
 {
-public string $prompt = '';
+    public string $prompt = '';
 
     public string $question = '';
 
     public string $answer = '';
-    
+
     public string $content = '';
 
     public ?Collection $messages;
@@ -26,8 +26,7 @@ public string $prompt = '';
 
     public string $selectedModel = 'gpt-4o-mini';
 
-
-    public function mount($conversationId=null)
+    public function mount($conversationId = null)
     {
         $this->conversationId = $conversationId;
         $this->messages = ConversationItem::where('conversation_id', $this->conversationId)->orderBy('created_at')->get();
@@ -60,7 +59,6 @@ public string $prompt = '';
         $this->js('$wire.streamResponse()');
     }
 
-
     public function streamResponse()
     {
         $this->getAiService()->sendMessageWithStream(
@@ -73,7 +71,6 @@ public string $prompt = '';
             $this->selectedModel
         );
 
-
         $this->showChats();
     }
 
@@ -81,23 +78,22 @@ public string $prompt = '';
     public function showChats()
     {
         $lastMessages = ConversationItem::where('conversation_id', $this->conversationId)->limit(2)->latest()->get()->sortBy('created_at');
-        foreach($lastMessages as $row){
+        foreach ($lastMessages as $row) {
             $this->messages->push($row);
         }
-        
+
         // Only reset question if the last assistant message is completed
         $lastAssistant = $this->messages->where('role', 'assistant')->last();
         if ($lastAssistant && $lastAssistant->status === \App\Enums\ResponseStatus::Completed) {
             $this->question = '';
         }
-        
-        $this->dispatch('scroll-stop');
-        $this->dispatch('loading-stop')->to(ChatBotAi::class);
-    }
 
+        $this->dispatch('scroll-stop');
+        $this->dispatch('loading-stop')->to(BotAi::class);
+    }
 
     public function render()
     {
-        return view('livewire.chat.chat-bot-ai-response');
+        return view('livewire.chat.bot-ai-response');
     }
 }

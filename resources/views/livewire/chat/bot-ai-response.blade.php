@@ -27,7 +27,7 @@
                                         'use_underscore' => true,
                                         // 'unordered_list_markers' => ['-', '*', '+'],
                                     ],
-                                    'html_input' => 'escape',
+                                    'html_input' => 'strip',
                                     'max_nesting_level' => 10,
                                     'renderer' => [
                                         'block_separator' => PHP_EOL,

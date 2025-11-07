@@ -1,5 +1,5 @@
 <div class="flex flex-col h-screen bg-zinc-50 dark:bg-zinc-900" wire:key="chat-bot-ai-{{ $conversationId }}">
-    <livewire:chat.chat-bot-ai-response :conversationId="$conversationId" wire:key="chat-bot-ai-content-{{ $conversationId }}" />
+    <livewire:chat.bot-ai-response :conversationId="$conversationId" wire:key="chat-bot-ai-content-{{ $conversationId }}" />
     
     <form wire:submit.prevent="submitPrompt" class="mt-14 sticky bottom-0  p-4 border-t border-gray-200 dark:border-zinc-700">
         <div class="w-full mx-auto px-0 md:px-16">
