@@ -4,7 +4,7 @@
     <head>
         @include('partials.head')
     </head>
-    <body class="md:flex min-h-screen bg-white dark:bg-zinc-800 overflow-hidden">
+    <body class="md:flex min-h-screen bg-white dark:bg-zinc-800 {{ request()->routeIs('profile.edit') ? '' : 'overflow-hidden' }}">
 
         <!-- Sidebar -->
         <flux:sidebar sticky collapsible class="h-screen w-64 border-e border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900 px-2">
@@ -19,12 +19,15 @@
                 <flux:sidebar.collapse class="in-data-flux-sidebar-on-desktop:not-in-data-flux-sidebar-collapsed-desktop:-mr-2" />
             </flux:sidebar.header>
 
+            <flux:sidebar.nav>
+                <flux:sidebar.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>{{ __('Dashboard') }}</flux:sidebar.item>
+                <flux:sidebar.item icon="chat-bubble-left-right" :href="route('chat.bot-ai.new')" :current="request()->routeIs('chat.bot-ai.new')" wire:navigate>{{ __('New chat') }}</flux:sidebar.item>
+                <flux:sidebar.item icon="magnifying-glass" x-on:click="$dispatch('open-search-modal')">{{ __('Search chats') }}</flux:sidebar.item>
+            </flux:sidebar.nav>
+
             <div class="flex-1 overflow-y-auto overflow-x-hidden w-full px-0">
                 <flux:sidebar.nav>
-                    <flux:sidebar.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>{{ __('Dashboard') }}</flux:sidebar.item>
-                    <flux:sidebar.item icon="chat-bubble-left-right" :href="route('chat.bot-ai.new')" :current="request()->routeIs('chat.bot-ai.new')" wire:navigate>{{ __('New chat') }}</flux:sidebar.item>
-                    <flux:sidebar.item icon="magnifying-glass" x-on:click="$dispatch('open-search-modal')">{{ __('Search chats') }}</flux:sidebar.item>
-                    
+
                     <flux:navlist variant="outline">
                         <flux:sidebar.group icon="chat-bubble-left-right" :heading="__('Chats')" class="grid text-xs font-semibold">
                             @livewire('chat.conversation-list')
@@ -36,7 +39,7 @@
 
             {{-- <flux:spacer /> --}}
 
-            <flux:navlist variant="outline">
+            {{-- <flux:navlist variant="outline">
                 <flux:sidebar.item icon="folder-git-2" href="https://github.com/laravel/livewire-starter-kit" target="_blank">
                 {{ __('Repository') }}
                 </flux:sidebar.item> 
@@ -44,7 +47,7 @@
                 <flux:sidebar.item icon="book-open-text" href="https://laravel.com/docs/starter-kits#livewire" target="_blank">
                 {{ __('Documentation') }}
                 </flux:sidebar.item>
-            </flux:navlist>
+            </flux:navlist> --}}
             
             <!-- Desktop User Menu -->
             <flux:dropdown class="hidden md:block sticky bottom-0 z-10" position="bottom" align="start">
@@ -102,6 +105,7 @@
                 <flux:navbar scrollable>
                     <flux:navbar.item href="#">File Validation</flux:navbar.item>
                     <flux:navbar.item href="#">CV Screening</flux:navbar.item>
+                    <flux:navbar.item href="#">Expense Tracker</flux:navbar.item>
                 </flux:navbar>
                 
                 <flux:spacer />
