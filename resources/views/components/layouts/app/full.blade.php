@@ -4,7 +4,7 @@
     <head>
         @include('partials.head')
     </head>
-    <body class="md:flex min-h-screen bg-white dark:bg-zinc-800 {{ request()->routeIs('profile.edit') ? '' : 'overflow-hidden' }}">
+    <body class="md:flex min-h-screen bg-white dark:bg-zinc-800 {{ request()->routeIs('profile.edit') || request()->routeIs('personalization.edit') ? '' : 'overflow-hidden' }}">
 
         <!-- Sidebar -->
         <flux:sidebar sticky collapsible class="h-screen w-64 border-e border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900 px-2">

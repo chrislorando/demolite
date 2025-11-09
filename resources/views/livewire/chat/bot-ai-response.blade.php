@@ -3,7 +3,7 @@
         @foreach ($messages ?? collect() as $message)
             @if ($message->role === 'user')
                 {{-- User - kanan --}}
-                <div class="flex justify-end my-4">
+                <div class="flex justify-end">
                     <div class="max-w-lg bg-zinc-700 text-white px-4 py-2 rounded-lg shadow break-words">
                         <pre class="whitespace-pre-wrap break-words">{{ $message->content }}</pre>
                     </div>
@@ -11,8 +11,8 @@
                 </div>
             @else
                 {{-- AI - full width dalam container --}}
-                <div class="my-4">
-                    <div class="px-4 py-2 rounded-lg shadow  text-justify overflow-hidden max-w-full">
+                <div class="">
+                    <div class="px-4 py-2 text-justify overflow-hidden max-w-full">
                         {{-- {!! \App\Services\MarkdownParser::parse($message->content) !!} --}}
                         {{-- {!! \GrahamCampbell\Markdown\Facades\Markdown::convert($message->content)->getContent() !!} --}}
                         {{-- {!! Illuminate\Support\Str::markdown($message->content) !!} --}}
@@ -62,7 +62,7 @@
             </div>
 
             <div class="my-4">
-                <div class=" px-4 py-2 rounded-lg shadow leading-8 break-words text-justify">
+                <div class=" px-4 py-2 leading-8 break-words text-justify">
                     <div wire:stream="answer">
                         {!! \App\Services\MarkdownParser::parse($answer) !!}
                     </div>
