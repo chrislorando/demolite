@@ -257,7 +257,7 @@ select:focus[data-flux-control] {
     right: 0.5rem;
     padding: 0.25rem 0.75rem;
     background-color: #404040;
-    color: #f5f5f5;
+    
     border: none;
     border-radius: 0.25rem;
     font-size: 0.75rem;
@@ -286,7 +286,7 @@ select:focus[data-flux-control] {
 .shiki pre code {
     background-color: transparent;
     padding: 0;
-    color: #f5f5f5;
+    
 }
 
 /* Tables */
@@ -307,13 +307,13 @@ select:focus[data-flux-control] {
     padding: 1rem;
     text-align: left;
     font-weight: 600;
-    color: #f5f5f5;
+    
 }
 
 .shiki table td {
     border: 1px solid #404040;
     padding: 1rem;
-    color: #e5e5e5;
+    
 }
 
 .shiki table tr:hover {
@@ -326,57 +326,57 @@ select:focus[data-flux-control] {
     font-size: 1.875rem;
     font-weight: 700;
     margin: 1.5rem 0;
-    color: #f5f5f5;
+    
 }
 
 .shiki h2 {
     font-size: 1.5rem;
     font-weight: 700;
     margin: 1.25rem 0;
-    color: #f5f5f5;
+    
 }
 
 .shiki h3 {
     font-size: 1.25rem;
     font-weight: 700;
     margin: 1rem 0;
-    color: #f5f5f5;
+    
 }
 
 .shiki h4 {
     font-size: 1.125rem;
     font-weight: 600;
     margin: 0.75rem 0;
-    color: #f5f5f5;
+    
 }
 
 .shiki h5 {
     font-weight: 600;
     margin: 0.5rem 0;
-    color: #f5f5f5;
+    
 }
 
 .shiki h6 {
     font-weight: 500;
     margin: 0.5rem 0;
-    color: #e5e5e5;
+    
 }
 
 /* Paragraphs and text */
 .shiki p {
     margin: 0.75rem 0;
     text-align: justify;
-    color: #e5e5e5;
+    
 }
 
 .shiki strong {
     font-weight: 700;
-    color: #f5f5f5;
+
 }
 
 .shiki em {
     font-style: italic;
-    color: #d4d4d4;
+
 }
 
 /* Links */
@@ -386,7 +386,7 @@ select:focus[data-flux-control] {
 }
 
 .shiki a:hover {
-    color: #93c5fd;
+    color: #5ea9ff;
 }
 
 /* Lists */
@@ -399,13 +399,13 @@ select:focus[data-flux-control] {
 .shiki ul li {
     list-style-type: disc;
     margin: 0.5rem 0;
-    color: #e5e5e5;
+    
 }
 
 .shiki ol li {
     list-style-type: decimal;
     margin: 0.5rem 0;
-    color: #e5e5e5;
+    
 }
 
 .shiki li {
@@ -441,5 +441,5 @@ select:focus[data-flux-control] {
 /* Strikethrough */
 .shiki del {
     text-decoration: line-through;
-    color: #737373;
+
 }

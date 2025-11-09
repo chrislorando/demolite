@@ -12,7 +12,7 @@
             @else
                 {{-- AI - full width dalam container --}}
                 <div class="">
-                    <div class="px-4 py-2 text-justify overflow-hidden max-w-full">
+                    <div class="px-4 py-2 text-justify overflow-hidden max-w-full text-zinc-600 dark:text-white">
                         {{-- {!! \App\Services\MarkdownParser::parse($message->content) !!} --}}
                         {{-- {!! \GrahamCampbell\Markdown\Facades\Markdown::convert($message->content)->getContent() !!} --}}
                         {{-- {!! Illuminate\Support\Str::markdown($message->content) !!} --}}
@@ -62,7 +62,7 @@
             </div>
 
             <div class="my-4">
-                <div class=" px-4 py-2 leading-8 break-words text-justify">
+                <div class=" px-4 py-2 leading-8 break-words text-justify text-zinc-600 dark:text-white">
                     <div wire:stream="answer">
                         {!! \App\Services\MarkdownParser::parse($answer) !!}
                     </div>
