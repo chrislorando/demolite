@@ -18,6 +18,9 @@ class OpenAiService implements AiServiceInterface
         $model = $model ?? 'gpt-4o-mini';
         $conversation = Conversation::findOrFail($conversationId);
 
+        // Get user personalization (only active ones)
+        $personalization = $conversation->user->personalization()->where('status', 'active')->first();
+
         // Get all messages for context
         $messages = $conversation->items()
             ->orderBy('created_at')
@@ -27,6 +30,22 @@ class OpenAiService implements AiServiceInterface
                 'content' => $message->content,
             ])
             ->toArray();
+
+        // Create system prompt with personalization
+        $systemPrompt = [
+            'role' => 'system',
+            'content' => <<<SYS
+                You are an AI assistant inside a Demolite app.
+                User profile:
+                - Nickname: {$personalization?->nickname}
+                - Occupation: {$personalization?->occupation}
+                - About: {$personalization?->about}
+                
+                Behavior Guidelines:
+                - Communication tone: {$personalization?->tone}
+                - Obey the following behavioral instructions at all times: {$personalization?->instructions}
+                SYS
+        ];
 
         // Save assistant message
         $chatService = app(ChatService::class);
@@ -41,7 +60,7 @@ class OpenAiService implements AiServiceInterface
             // Call OpenAI API with streaming using createStreamed()
             $stream = OpenAI::chat()->createStreamed([
                 'model' => $model,
-                'messages' => $messages ?? $content,
+                'messages' => array_merge([$systemPrompt], $messages ?? $content),
             ]);
 
             $assistantContent = '';

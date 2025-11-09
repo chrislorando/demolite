@@ -67,4 +67,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Conversation::class);
     }
+
+    public function personalization()
+    {
+        return $this->hasOne(Personalization::class);
+    }
 }
