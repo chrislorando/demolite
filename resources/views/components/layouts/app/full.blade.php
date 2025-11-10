@@ -103,7 +103,7 @@
                 <flux:sidebar.toggle class="lg:hidden" icon="bars-2" inset="left" />
 
                 <flux:navbar scrollable>
-                    <flux:navbar.item href="#">File Validation</flux:navbar.item>
+                    <flux:navbar.item href="#">Document Validation</flux:navbar.item>
                     <flux:navbar.item href="#">CV Screening</flux:navbar.item>
                     <flux:navbar.item href="#">Expense Tracker</flux:navbar.item>
                 </flux:navbar>
