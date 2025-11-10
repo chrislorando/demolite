@@ -5,7 +5,6 @@ namespace App\Services;
 use App\Enums\ResponseStatus;
 use App\Models\Conversation;
 use App\Models\ConversationItem;
-use App\Services\ChatService;
 use Exception;
 use Log;
 use OpenAI\Laravel\Facades\OpenAI;
@@ -79,7 +78,7 @@ class OpenAiService implements AiServiceInterface
                 }
             }
 
-            Log::info("Streaming completed with {$chunkCount} chunks, total content length: " . strlen($assistantContent));
+            Log::info("Streaming completed with {$chunkCount} chunks, total content length: ".strlen($assistantContent));
 
             // Update status to completed and set content and response_id
             $assistantMessage->update(['status' => ResponseStatus::Completed, 'content' => $assistantContent, 'response_id' => $responseId]);
@@ -123,7 +122,7 @@ class OpenAiService implements AiServiceInterface
                 'status' => $response->status,
             ];
         } catch (Throwable $e) {
-            $errorMessage = 'Failed to cancel OpenAI response: ' . $e->getMessage();
+            $errorMessage = 'Failed to cancel OpenAI response: '.$e->getMessage();
 
             Log::error($errorMessage, ['response_id' => $responseId]);
 
@@ -147,11 +146,11 @@ class OpenAiService implements AiServiceInterface
                 ];
             }
 
-            Log::info('Successfully fetched ' . count($models) . ' models from OpenAI');
+            Log::info('Successfully fetched '.count($models).' models from OpenAI');
 
             return $models;
         } catch (Throwable $e) {
-            $errorMessage = 'Failed to fetch models from OpenAI: ' . $e->getMessage();
+            $errorMessage = 'Failed to fetch models from OpenAI: '.$e->getMessage();
 
             if (str_contains($e->getMessage(), 'API key') || str_contains($e->getMessage(), 'api_key')) {
                 $errorMessage = 'OpenAI API key is not configured. Please add your API key to the .env file.';
@@ -164,5 +163,42 @@ class OpenAiService implements AiServiceInterface
             Log::error($errorMessage);
             throw new Exception($errorMessage);
         }
+    }
+
+    public function createDocumentResponse(string $document, ?string $instructions = null, ?string $model = null)
+    {
+        $response = OpenAI::responses()->create([
+            'model' => $model ?: 'gpt-4o-mini',
+            'input' => [
+                [
+                    'role' => 'user',
+                    'content' => [
+                        [
+                            'type' => 'input_text',
+                            'text' => "
+                                You are a document validator. This document can contain various types of forms or letters.
+                                Your task:
+                                1. Identify information or sections that appear to be mandatory in context (e.g., the applicant's name, signature, date, identification number, or sections that are mentioned but are blank).
+                                2. Determine whether the text is complete and consistent.
+                                3. Provide a summary of any missing or inconsistent information.
+                                3. Return the results in the following JSON format:
+                                [
+                                    {\"page\": <page number>, \"section\": \"<section or sentence>\", \"issue\": \"<problem>\", \"suggestion\": \"<what needs to be improved>\"}
+                                ]
+                                
+                                Additional rules:
+                                ".$instructions,
+                                
+                        ],
+                        [
+                            'type' => 'input_file',
+                            'file_url' => $document,
+                        ],
+                    ],
+                ],
+            ],
+        ]);
+
+        return $response;
     }
 }
