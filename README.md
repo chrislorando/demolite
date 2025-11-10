@@ -9,9 +9,9 @@ This project serves both as a learning medium to deepen my understanding of mode
 ## Features
 
 - Chat with AI using OpenAI API
-- File validation powered by AI
+- Document verifier powered by AI
 - CV/Resume analysis and feedback
-- Conversation history management
+- Expense tracker
 - Search conversations
 - Real-time chat updates with Livewire stream
 - Responsive UI with TailwindCSS and Flux UI
