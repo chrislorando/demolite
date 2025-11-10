@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 use Livewire\Volt\Volt;
+use App\Livewire\Chat\SharedConversation as SharedConversationComponent;
 
 Route::get('/', function () {
     return view('welcome');
@@ -47,3 +48,6 @@ Route::middleware(['auth'])->group(function () {
         )
         ->name('two-factor.show');
 });
+
+// Public route for shared conversations
+Route::get('/shared/{token}', SharedConversationComponent::class)->name('chat.shared.show');
