@@ -32,8 +32,6 @@
                 {{-- AI - full width dalam container --}}
                 <div class="px-4 text-justify overflow-hidden max-w-full text-zinc-600 dark:text-white">
                         {{-- {!! \App\Services\MarkdownParser::parse($message->content) !!} --}}
-                        {{-- {!! \GrahamCampbell\Markdown\Facades\Markdown::convert($message->content)->getContent() !!} --}}
-                        {{-- {!! Illuminate\Support\Str::markdown($message->content) !!} --}}
                         <div class="shiki">
                             <x-markdown
                                 :anchors="false"
@@ -43,7 +41,6 @@
                                         'enable_strong' => true,
                                         'use_asterisk' => true,
                                         'use_underscore' => true,
-                                        // 'unordered_list_markers' => ['-', '*', '+'],
                                     ],
                                     'html_input' => 'strip',
                                     'max_nesting_level' => 10,
