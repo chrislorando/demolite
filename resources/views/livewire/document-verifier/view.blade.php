@@ -101,7 +101,7 @@
                 </div>
             @endif
 
-            <x-markdown :anchors="false"
+            {{-- <x-markdown :anchors="false"
                         :options="[
                             'commonmark' => [
                                 'enable_em' => true,
@@ -119,7 +119,7 @@
                         ]"
                         theme="github-dark">
                 {!! $document->response !!}
-            </x-markdown>
+            </x-markdown> --}}
         </div>
     @else
         <div class="p-4 text-zinc-500">No document selected</div>

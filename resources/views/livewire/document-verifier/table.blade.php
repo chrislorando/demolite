@@ -5,8 +5,7 @@
         </div>
 
         <div class="flex items-center gap-2">
-            {{-- Call a server method on this child component which will dispatch the event up to the parent --}}
-            <flux:button wire:click="openUpload">Upload PDF</flux:button>
+            <flux:button wire:click="openUpload">Upload Doc</flux:button>
         </div>
     </div>
 
@@ -38,8 +37,8 @@
                         </td>
                         <td class="px-4 py-3">{{ $document->created_at->diffForHumans() }}</td>
                         <td class="px-4 py-3">
-                            <flux:button size="sm" variant="ghost" wire:click="view('{{ $document->id }}')">View</flux:button>
-                            <flux:button size="sm" variant="danger" wire:click="confirmDelete('{{ $document->id }}')">Delete</flux:button>
+                            <flux:button size="sm" variant="primary" wire:click="view('{{ $document->id }}')" icon="eye"></flux:button>
+                            <flux:button size="sm" variant="danger" wire:click="confirmDelete('{{ $document->id }}')" icon="trash"></flux:button>
                         </td>
                     </tr>
                     @empty

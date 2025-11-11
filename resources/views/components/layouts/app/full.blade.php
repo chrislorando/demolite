@@ -104,7 +104,7 @@
 
                 <flux:navbar scrollable>
                     <flux:sidebar.item icon="document-magnifying-glass" :href="route('documents.index')" :current="request()->routeIs('documents.index')" wire:navigate>{{ __('Document Verifier') }}</flux:sidebar.item>
-                    <flux:navbar.item href="#">CV Screening</flux:navbar.item>
+                    <flux:sidebar.item icon="document-text" :href="route('cv-screening.index')" :current="request()->routeIs('cv-screening.index')" wire:navigate>{{ __('CV Screening') }}</flux:sidebar.item>
                     <flux:navbar.item href="#">Expense Tracker</flux:navbar.item>
                 </flux:navbar>
                 

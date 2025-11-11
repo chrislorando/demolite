@@ -1,6 +1,6 @@
 <div>
     <div class="flex items-center justify-between">
-        @include('partials.general-heading', ['heading' => 'Documents', 'subheading' => 'Uploaded PDF documents and verification results.'])
+        @include('partials.general-heading', ['heading' => 'Documents', 'subheading' => 'Uploaded documents and verification results.'])
     </div>
 
     <livewire:document-verifier.table />
