@@ -60,12 +60,20 @@ class OpenAiService implements AiServiceInterface
             $stream = OpenAI::chat()->createStreamed([
                 'model' => $model,
                 'messages' => array_merge([$systemPrompt], $messages ?? $content),
+                'stream_options'=>[
+                    'include_usage' => true,
+                ]
             ]);
 
             $assistantContent = '';
             $chunkCount = 0;
+            $finalUsage = null;
 
             foreach ($stream as $response) {
+                    if ($response->usage !== null) {
+                        $finalUsage = $response->usage;
+                    }
+
                 if ($responseId === null && isset($response->id)) {
                     $responseId = $response->id;
                 }
@@ -81,7 +89,7 @@ class OpenAiService implements AiServiceInterface
             Log::info("Streaming completed with {$chunkCount} chunks, total content length: ".strlen($assistantContent));
 
             // Update status to completed and set content and response_id
-            $assistantMessage->update(['status' => ResponseStatus::Completed, 'content' => $assistantContent, 'response_id' => $responseId]);
+            $assistantMessage->update(['status' => ResponseStatus::Completed, 'content' => $assistantContent, 'response_id' => $responseId, 'total_token' => $finalUsage?->totalTokens ?? 0]);
         } catch (Throwable $e) {
             // Update status to failed on error
             $assistantMessage->update(['status' => ResponseStatus::Failed]);
@@ -106,28 +114,6 @@ class OpenAiService implements AiServiceInterface
         }
 
         return $assistantMessage;
-    }
-
-    public function cancelResponse(string $responseId): array
-    {
-        try {
-            Log::info('Cancelling OpenAI response', ['response_id' => $responseId]);
-
-            $response = OpenAI::responses()->cancel($responseId);
-
-            Log::info('Successfully cancelled OpenAI response', ['response_id' => $response->id, 'status' => $response->status]);
-
-            return [
-                'id' => $response->id,
-                'status' => $response->status,
-            ];
-        } catch (Throwable $e) {
-            $errorMessage = 'Failed to cancel OpenAI response: '.$e->getMessage();
-
-            Log::error($errorMessage, ['response_id' => $responseId]);
-
-            throw new Exception($errorMessage);
-        }
     }
 
     public function fetchModels(): array
@@ -212,6 +198,80 @@ class OpenAiService implements AiServiceInterface
                                             \"suggestion\": \"<what needs to be improved>\"
                                         }
                                     ]"
+
+                        ],
+                        [
+                            'type' => 'input_file',
+                            'file_url' => $document,
+                        ],
+                    ],
+                ],
+            ],
+        ]);
+
+        return $response;
+    }
+
+    public function createCvScreeningResponse(string $document, ?string $jobOffer = null, ?string $model = null)
+    {
+        $response = OpenAI::responses()->create([
+            'model' => $model ?: 'gpt-4o-mini',
+            'input' => [
+                [
+                    'role' => 'user',
+                    'content' => [
+                        [
+                            'type' => 'input_text',
+                            'text' => <<<PROMPT
+                                        You are a professional HR analyst or recruiter.
+                                        Compare this CV with the following job description:
+
+                                        Job Description (link or text):
+                                        {$jobOffer}
+
+                                        Instructions:
+                                        - Analyze the CV content and compare it carefully to the job description.
+                                        - Extract "job_position" only from the first explicit title line or heading in the job description. 
+                                        Do not guess or infer based on general wording.
+                                        - Evaluate 3 aspects: skills, experience, and education.
+
+                                        Scoring rules (be strict and realistic):
+                                        * 0 to 49 = poor match (many key skills/requirements missing)
+                                        * 50 to 69 = fair match (some overlap, but gaps in core skills or experience)
+                                        * 70 to 84 = good match (most requirements met, minor gaps)
+                                        * 85 to 100 = excellent match (strong alignment in all areas)
+                                        - Assume 70 is an average match.
+                                        - Only assign 90+ if the CV fully meets all key requirements with strong evidence.
+                                        - Be concise and factual. Avoid exaggeration or vague praise.
+
+                                        Penalty rules:
+                                        - If a required core skill, framework, or technology mentioned in the job offer is not found in the CV, deduct at least 20 points from skill_match.
+                                        - If total relevant experience is significantly below the job requirement, lower experience_match proportionally.
+                                        - Do not infer or assume skills or experience not explicitly stated in the CV.
+                                        - Keep typical candidate scores between 60–75 unless the CV is clearly exceptional.
+
+                                        - Set "is_recommended" to 1 if overall_score >= 75, otherwise 0.
+
+                                        - Generate a short personalized cover letter (max 200 words) in HTML format (use <p>, <br>, <strong> where appropriate). The tone should be confident, professional, and aligned with the job description.
+
+                                        - Add a “suggestion” field containing a brief, actionable recommendation (1–2 sentences) for improving the CV to better match this job.
+                                        
+
+                                        Return JSON only with this structure:
+                                        {
+                                            "job_position": "string (extracted or inferred from the job description)",
+                                            "skill_match": 0-100,
+                                            "experience_match": 0-100,
+                                            "education_match": 0-100,
+                                            "overall_score": 0-100,
+                                            "summary": "short text summary of the analysis",
+                                            "suggestion": "1-5 sentence actionable advice for improvement",
+                                            "cover_letter": "<p>HTML formatted cover letter</p>",
+                                            "is_recommended": 0 or 1
+                                        }
+
+                                        PROMPT
+
 
                         ],
                         [

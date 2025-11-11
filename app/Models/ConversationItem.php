@@ -19,10 +19,12 @@ class ConversationItem extends Model
         'model_id',
         'response_id',
         'status',
+        'total_token',
     ];
 
     protected $casts = [
         'status' => ResponseStatus::class,
+        'total_token' => 'integer',
     ];
 
     public function conversation(): BelongsTo

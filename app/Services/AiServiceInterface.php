@@ -13,10 +13,6 @@ interface AiServiceInterface
      */
     public function sendMessageWithStream(string $conversationId, string $content, callable $onChunk, ?string $model = null);
 
-    /**
-     * Cancel a model response with the given ID
-     */
-    public function cancelResponse(string $responseId): array;
 
     /**
      * Send a file to be checked
@@ -24,4 +20,11 @@ interface AiServiceInterface
      * @return mixed
      */
     public function createDocumentResponse(string $document, ?string $instruction = null, ?string $model = null);
+
+    /**
+     * Send a file to be checked
+     *
+     * @return mixed
+     */
+    public function createCvScreeningResponse(string $document, ?string $jobOffer = null, ?string $model = null);
 }

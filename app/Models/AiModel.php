@@ -16,6 +16,7 @@ class AiModel extends Model
         'owned_by',
         'status',
         'type',
+        'window_context'
     ];
 
     protected $casts = [
