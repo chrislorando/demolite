@@ -28,7 +28,7 @@ class ProcessDocument implements ShouldQueue
      * The number of seconds to wait before retrying the job.
      * Can be a single int or an array of backoff seconds per attempt.
      */
-    public int|array $backoff = [10, 20, 30];
+    public int|array $backoff = [5, 10, 15];
 
     /**
      * Keep retrying until this timestamp. Return a DateTimeInterface in the future.
@@ -62,20 +62,7 @@ class ProcessDocument implements ShouldQueue
         // mark as in progress
         $document->update(['status' => ResponseStatus::InProgress]);
 
-        // Perform the AI request. Let exceptions bubble so the queue worker
-        // can retry according to $tries and $backoff. We'll handle the
-        // permanent failure in the failed() method.
         $response = $aiService->createDocumentResponse($document->url, $document->instructions);
-
-        // Normalize response to array if possible
-        // if (is_object($response) && method_exists($response, 'toArray')) {
-        //     $responseArr = $response->toArray();
-        // } elseif (is_array($response)) {
-        //     $responseArr = $response['output_text'];
-        // } else {
-        //     // Fallback to json encode/decode
-        //     $responseArr = json_decode(json_encode($response['output_text']), true);
-        // }
 
         $document->update([
             'response' => $response->outputText,

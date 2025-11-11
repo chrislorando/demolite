@@ -176,19 +176,43 @@ class OpenAiService implements AiServiceInterface
                         [
                             'type' => 'input_text',
                             'text' => "
-                                You are a document validator. This document can contain various types of forms or letters.
-                                Your task:
-                                1. Identify information or sections that appear to be mandatory in context (e.g., the applicant's name, signature, date, identification number, or sections that are mentioned but are blank).
-                                2. Determine whether the text is complete and consistent.
-                                3. Provide a summary of any missing or inconsistent information.
-                                3. Return the results in the following JSON format:
-                                [
-                                    {\"page\": <page number>, \"section\": \"<section or sentence>\", \"issue\": \"<problem>\", \"suggestion\": \"<what needs to be improved>\"}
-                                ]
-                                
-                                Additional rules:
-                                ".$instructions,
-                                
+                                    You are a professional document verifier.
+
+                                    You must only analyze the provided document text.
+                                    Do not use general knowledge, assumptions, or external data outside the document or user-provided references.
+                                    If the document text does not explicitly contain a field, section, or checklist item, do not infer or create it.
+
+                                    Special handling for checklist sections:
+                                    - The symbols “☑”, “✔”, or “[x]” indicate the item is provided or checked.
+                                    - The symbols “☐”, “[ ]”, or “-” indicate the item is missing or unchecked.
+                                    - Treat any required item (“*”) that is unchecked as incomplete.
+                                    - Checklist detection must rely only on the literal symbols shown in the text. Do not assume completion if symbols are missing or ambiguous.
+                                    - Output each checklist item as an individual record in the JSON.
+
+                                    Your task:
+                                    1. Identify information or sections that are mandatory *according to the context of the document itself* (for example: fields labeled Name, Signature, Date, ID Number, or items marked with an asterisk “*”).
+                                    2. Check whether each mandatory section or field is filled and consistent.
+                                    3. For checklist items, determine whether required items (“*”) are checked or unchecked.
+                                    4. Ignore any content that is not related to the document's own structure or purpose.
+                                    5. Apply these additional rules (if any): {{ $instructions }}
+                                    6. You must strictly obey these instructions. Any reasoning or validation outside the document text is invalid.
+                                    7. Only include records where there is an actual issue or missing/invalid data.
+                                       Do not include entries that are completely valid and contain no issues.
+                                       If everything is valid, return an empty JSON array [].
+
+                                    Output only verified findings in this exact JSON format:
+                                    [
+                                        {
+                                            \"page\": <page number>,
+                                            \"section\": \"<section name>\",
+                                            \"field\": \"<field name>\",
+                                            \"value\": \"<user input or empty>\",
+                                            \"status\": \"<valid | incomplete | inconsistent | optional_missing>\",
+                                            \"issue\": \"<short description>\",
+                                            \"suggestion\": \"<what needs to be improved>\"
+                                        }
+                                    ]"
+
                         ],
                         [
                             'type' => 'input_file',
