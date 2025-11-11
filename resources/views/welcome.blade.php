@@ -40,7 +40,7 @@
                 <div class="space-y-4">
                     <p class="text-zinc-600 dark:text-zinc-400 text-sm">Free, open source, and powerful</p>
                     <h1 class="text-4xl lg:text-5xl font-semibold leading-tight">Explore AI models in one clean place</h1>
-                    <p class="text-zinc-600 dark:text-zinc-400 max-w-xl">Demolite is a free, open-source collection of AI-powered mini apps for real-world tasks. From chatbots to file validation and resume analysis—all powered by OpenAI. Try the live demo or explore the source code on GitHub.</p>
+                    <p class="text-zinc-600 dark:text-zinc-400 max-w-xl">Demolite is a free, open-source collection of AI-powered mini apps for real-world tasks. From chatbots to document verification, resume analysis—all and expense tracker powered by OpenAI. Try the live demo or explore the source code on GitHub.</p>
                     <div class="flex items-center gap-3 pt-2">
                         <a href="{{ route('chat.bot-ai') }}" class="px-6 py-3 rounded-md text-white bg-black hover:bg-zinc-900 transition-colors">Start Exploring</a>
                         <a href="https://github.com/chrislorando/demolite" target="_blank" class="px-6 py-3 rounded-md border border-zinc-200 dark:border-zinc-700 hover:bg-zinc-800/5 transition-colors">Learn More</a>
@@ -86,10 +86,10 @@
                     </div>
                     <div class="grid lg:grid-cols-2 gap-6">
                         <div class="rounded-md border border-zinc-200 dark:border-zinc-700 p-0 overflow-hidden">
-                            <img src="https://picsum.photos/seed/showcase-1/1024/600" alt="Showcase left" class="w-full h-64 object-cover" />
+                            <img src="{{ asset('screenshot1.png') }}" alt="Showcase left" class="w-full h-64 object-cover" />
                         </div>
                         <div class="rounded-md border border-zinc-200 dark:border-zinc-700 p-0 overflow-hidden">
-                            <img src="https://picsum.photos/seed/showcase-2/1024/600" alt="Showcase right" class="w-full h-64 object-cover" />
+                            <img src="{{ asset('screenshot2.png') }}" alt="Showcase right" class="w-full h-64 object-cover" />
                         </div>
                     </div>
                 </div>
