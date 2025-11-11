@@ -46,6 +46,10 @@ document.addEventListener('livewire:navigated', function() {
     addCopyButtonsToCodeBlocks();
 });
 
+document.addEventListener('document-view-opened', function() {
+    setTimeout(() => addCopyButtonsToCodeBlocks(), 60);
+});
+
 // Also watch for dynamically added content (from Livewire streams)
 const observer = new MutationObserver(function() {
     addCopyButtonsToCodeBlocks();
