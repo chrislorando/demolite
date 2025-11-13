@@ -8,7 +8,7 @@
         <form wire:submit.prevent="submit" class="space-y-4">
             <flux:field>
                 <flux:label>Instructions (optional)</flux:label>
-                <flux:textarea wire:model="instructions" rows="4" />
+                <flux:textarea wire:model="instructions" rows="4" placeholder="- This field cannot be empty..." />
                 <flux:error name="instructions" />
             </flux:field>
 
