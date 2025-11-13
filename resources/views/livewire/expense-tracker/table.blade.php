@@ -24,8 +24,9 @@
                     <tr>
                         <th class="px-4 py-2 text-left">Receipt No</th>
                         <th class="px-4 py-2 text-left">Store</th>
-                        <th class="px-4 py-2 text-left">Items</th>
+                        <th class="px-4 py-2 text-right">Items</th>
                         <th class="px-4 py-2 text-right">Total</th>
+                        <th class="px-4 py-2">Date</th>
                         <th class="px-4 py-2 text-left">Status</th>
                         <th class="px-4 py-2 text-left">Uploaded</th>
                         <th class="px-4 py-2 text-left">Actions</th>
@@ -36,8 +37,13 @@
                         <tr class="border-t border-zinc-100 dark:border-zinc-800">
                             <td class="px-4 py-3">{{ $receipt->receipt_no }}</td>
                             <td class="px-4 py-3">{{ $receipt->store_name }}</td>
-                            <td class="px-4 py-3">{{ $receipt->items_count ?? $receipt->items->count() }}</td>
+                            <td class="px-4 py-3 text-right">{{ $receipt->items_count ?? $receipt->items->count() }}</td>
                             <td class="px-4 py-3 text-right">{{ $receipt->currency }} {{ number_format($receipt->total_payment, 2) }}</td>
+                            <td class="px-4 py-3">
+                                {{ optional($receipt->transaction_date)?->format('D, d M Y') ?? 'No date' }}
+                                <br>
+                                {{ optional($receipt->transaction_date)?->format('H:i:s') ?? '' }}
+                            </td>
                             <td class="px-4 py-3">
                                 @php
                                     $statusKey = $receipt->status?->value ?? ($receipt->status ?? 'created');
@@ -49,7 +55,7 @@
                             <td class="px-4 py-3">{{ $receipt->created_at->diffForHumans() }}</td>
                             <td class="px-4 py-3">
                                 <div class="flex items-center gap-2">
-                                    <flux:button size="sm" variant="primary" wire:click="showDetail('{{ $receipt->id }}')" icon="eye"></flux:button>
+                                    <flux:button size="sm" variant="primary" :href="route('expenses.show', $receipt)" icon="eye" wire:navigate></flux:button>
                                     <flux:button size="sm" variant="danger" wire:click="confirmDelete('{{ $receipt->id }}')" icon="trash"></flux:button>
                                 </div>
                             </td>

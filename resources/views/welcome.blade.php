@@ -15,7 +15,7 @@
     <header class="container mx-auto px-8 py-6">
         <nav class="flex items-center justify-between">
             <a href="{{ route('home') }}" class="flex items-center gap-3">
-                <img src="/logo.jpeg" alt="{{ config('app.name') }} logo" class="size-9 rounded-md object-cover" />
+                <img src="/logo.png" alt="{{ config('app.name') }} logo" class="size-9 rounded-md object-cover" />
                 <span class="font-semibold text-lg">{{ config('app.name') }}</span>
             </a>
             @if (Route::has('login'))
@@ -39,7 +39,7 @@
             <div class="grid lg:grid-cols-2 items-center gap-8">
                 <div class="space-y-4">
                     <p class="text-zinc-600 dark:text-zinc-400 text-sm">Free, open source, and powerful</p>
-                    <h1 class="text-4xl lg:text-5xl font-semibold leading-tight">Explore AI models in one clean place</h1>
+                    <h1 class="text-4xl lg:text-5xl font-semibold leading-tight">Explore AI samples mini apps in one clean place</h1>
                     <p class="text-zinc-600 dark:text-zinc-400 max-w-xl">GPT Dome is a free, open-source collection of AI-powered mini apps for real-world tasks. From chatbots to document verification, resume analysis—all and expense tracker powered by OpenAI. Try the live demo or explore the source code on GitHub.</p>
                     <div class="flex items-center gap-3 pt-2">
                         <a href="{{ route('chat.bot-ai') }}" class="px-6 py-3 rounded-md text-white bg-black hover:bg-zinc-900 transition-colors">Start Exploring</a>
@@ -84,13 +84,25 @@
                         <span class="inline-block size-3 rounded-full bg-neutral-200 dark:bg-zinc-800"></span>
                         <span class="inline-block size-3 rounded-full bg-neutral-200 dark:bg-zinc-800"></span>
                     </div>
-                    <div class="grid lg:grid-cols-2 gap-6">
-                        <div class="rounded-md border border-zinc-200 dark:border-zinc-700 p-0 overflow-hidden">
-                            <img src="{{ asset('screenshot1.png') }}" alt="Showcase left" class="w-full h-64 object-cover" />
-                        </div>
-                        <div class="rounded-md border border-zinc-200 dark:border-zinc-700 p-0 overflow-hidden">
-                            <img src="{{ asset('screenshot2.png') }}" alt="Showcase right" class="w-full h-64 object-cover" />
-                        </div>
+                    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                        <figure class="rounded-md border border-zinc-200 dark:border-zinc-700 overflow-hidden bg-zinc-950/5 dark:bg-zinc-50/5">
+                            <img src="{{ asset('screenshot1.png') }}" alt="Document Verifier interface preview" class="w-full object-contain" />
+                            <figcaption class="px-4 py-3 text-sm text-zinc-600 dark:text-zinc-400">
+                                Document Verifier — upload files to highlight missing fields and inconsistencies instantly.
+                            </figcaption>
+                        </figure>
+                        <figure class="rounded-md border border-zinc-200 dark:border-zinc-700 overflow-hidden bg-zinc-950/5 dark:bg-zinc-50/5">
+                            <img src="{{ asset('screenshot2.png') }}" alt="CV Screening dashboard preview" class="w-full object-contain" />
+                            <figcaption class="px-4 py-3 text-sm text-zinc-600 dark:text-zinc-400">
+                                CV Screening — match résumés with job descriptions and auto-generate tailored cover letters.
+                            </figcaption>
+                        </figure>
+                        <figure class="rounded-md border border-zinc-200 dark:border-zinc-700 overflow-hidden bg-zinc-950/5 dark:bg-zinc-50/5">
+                            <img src="{{ asset('screenshot3.png') }}" alt="Expense Tracker dashboard preview" class="w-full object-contain" />
+                            <figcaption class="px-4 py-3 text-sm text-zinc-600 dark:text-zinc-400">
+                                Expense Tracker — capture receipts and see monthly spending summaries powered by AI extraction.
+                            </figcaption>
+                        </figure>
                     </div>
                 </div>
             </div>

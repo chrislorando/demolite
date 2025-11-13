@@ -2,7 +2,7 @@
 
 A free, open-source TALL Stack application showcasing AI-powered mini apps. Rather than just testing models, GPT Dome is a collection of practical AI applications including a chatbot, file validation, CV/resume analysis, and more. Powered by OpenAI.
 
-<img alt="GPT Dome AI Playground" src="https://github.com/user-attachments/assets/c4a71d9c-ab92-4af0-801d-25cfb4581354" />
+<img alt="GPT Dome AI Playground" src="https://github.com/user-attachments/assets/2dd5e8cf-9fe1-417e-b391-1f2536ae4331" />
 
 This project serves both as a learning medium to deepen my understanding of modern web development technologies and as a showcase piece for my professional portfolio. The demo is freely accessible online, and the complete source code is available on GitHub for anyone to use, modify, or contribute to.
 

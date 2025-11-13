@@ -33,5 +33,5 @@ interface AiServiceInterface
      *
      * @return mixed
      */
-    public function createReceiptResponse(string $document, ?string $model = null);
+    public function createReceiptResponse(string $document, string|null $extension = null, ?string $model = null);
 }

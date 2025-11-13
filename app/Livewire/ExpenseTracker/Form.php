@@ -32,6 +32,8 @@ class Form extends Component
 
         $url = Storage::disk('s3')->url($path);
 
+        $extension = $this->file->extension();
+
         $receipt = Receipt::create([
             'id' => $id,
             'user_id' => auth()->id(),
@@ -50,7 +52,7 @@ class Form extends Component
         ]);
 
         // Dispatch background job to process the document
-        ProcessReceipt::dispatch($receipt->id);
+        ProcessReceipt::dispatch($receipt->id, $extension);
 
         $this->resetForm();
 

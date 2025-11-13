@@ -62,6 +62,10 @@ Route::get('expenses-tracker', \App\Livewire\ExpenseTracker\Index::class)
     ->middleware(['auth', 'verified'])
     ->name('expenses.index');
 
+Route::get('expenses-tracker/{receipt}', \App\Livewire\ExpenseTracker\Detail::class)
+    ->middleware(['auth', 'verified'])
+    ->name('expenses.show');
+
 Route::get('cv-screening', \App\Livewire\CvScreening\Index::class)
     ->middleware(['auth', 'verified'])
     ->name('cv-screening.index');

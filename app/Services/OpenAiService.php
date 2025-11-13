@@ -293,85 +293,105 @@ class OpenAiService implements AiServiceInterface
         return $response;
     }
 
-    public function createReceiptResponse(string $document, string|null $model = null)
+    public function createReceiptResponse(string $document, string|null $extension = null, ?string $model = null)
     {
-        $response = OpenAI::responses()->create([
-                'model' => $model ?: 'gpt-4.1', // atau 'gpt-4o-mini' jika vision aktif
-                'input' => [
-                    [
-                        'role' => 'user',
-                        'content' => [
-                            [
-                                'type' => 'input_text',
-                                'text' => <<<PROMPT
-                                    You are a professional OCR and document parser specialized in receipts.
+        $prompt = <<<PROMPT
+        You are a professional OCR and document parser specialized in receipts.
 
-                                    Task:
-                                    Extract structured data from a receipt image, regardless of store format or layout.
-                                    Receipts may come from supermarkets, minimarkets, restaurants, or e-commerce.
-                                    Normalize all extracted information into the standardized JSON structure below.
+        Task:
+        Extract structured data from a receipt image, regardless of store format or layout.
+        Receipts may come from supermarkets, minimarkets, restaurants, or e-commerce.
+        Normalize all extracted information into the standardized JSON structure below.
 
-                                    Requirements:
-                                    - Detect and normalize store information (name, phone, company, address, npwp, branch address) when present.
-                                    - Detect transaction info (cashier name, date, time, receipt number) if printed.
-                                    - Detect purchased items even if labels differ (e.g. "QTY", "JUMLAH", "PCS", etc.).
-                                    - Each item must include: name, quantity, unit_price, total_price, and discount if available.
-                                    - Detect total summary fields (subtotal, total_payment, payment_method, change, dpp, ppn, total_discount).
-                                    - If a field is missing, still include it with null or 0.
-                                    - Use only plain integers for numeric values.
-                                    - If currency symbols or contextual cues indicate local currency, include "currency": "<CODE>" (e.g. "IDR", "USD", "MYR"). 
-                                    If uncertain, default to "IDR".
-                                    - Date format: YYYY-MM-DD, time: HH:MM:SS.
-                                    - Output JSON only, no explanations or comments.
+        Requirements:
+        - Detect and normalize store information (name, phone, company, address, npwp, branch address) when present.
+        - Detect transaction info (cashier name, date, time, receipt number) if printed.
+        - Detect purchased items even if labels differ (e.g. "QTY", "JUMLAH", "PCS", etc.).
+        - Each item must include: name, quantity, unit_price, total_price, and discount if available.
+        - Detect total summary fields (subtotal, total_payment, payment_method, change, dpp, ppn, total_discount).
+        - If a field is missing, still include it with null or 0.
+        - Use only plain integers for numeric values.
+        - If currency symbols or contextual cues indicate local currency, include "currency": "<CODE>" (e.g. "IDR", "USD", "MYR"). 
+        If uncertain, default to "IDR".
+        - Date format: YYYY-MM-DD, time: HH:MM:SS.
+        - Output JSON only, no explanations or comments.
 
-                                    Expected structure:
-                                    {
-                                        "store": {
-                                            "name": null,
-                                            "phone": null,
-                                            "company": null,
-                                            "address": null,
-                                            "npwp": null,
-                                            "branch_address": null
-                                        },
-                                        "transaction": {
-                                            "cashier": null,
-                                            "date": null,
-                                            "time": null,
-                                            "receipt_no": null,
-                                            "currency": null,
-                                            "items": [
-                                                {
-                                                    "name": "",
-                                                    "quantity": 0,
-                                                    "unit_price": 0,
-                                                    "total_price": 0,
-                                                    "discount": 0
-                                                }
-                                            ],
-                                            "summary": {
-                                                "total_items": 0,
-                                                "total_discount": 0,
-                                                "subtotal": 0,
-                                                "total_payment": 0,
-                                                "payment_method": null,
-                                                "change": 0,
-                                                "dpp": 0,
-                                                "ppn": 0
-                                            }
-                                        }
-                                    }
-                                    PROMPT
-                            ],
-                            [
-                                'type' => 'input_image',
-                                'image_url' => $document,
-                            ],
+        Expected structure:
+        {
+            "store": {
+                "name": null,
+                "phone": null,
+                "company": null,
+                "address": null,
+                "npwp": null,
+                "branch_address": null
+            },
+            "transaction": {
+                "cashier": null,
+                "date": null,
+                "time": null,
+                "receipt_no": null,
+                "currency": null,
+                "items": [
+                    {
+                        "name": "",
+                        "quantity": 0,
+                        "unit_price": 0,
+                        "total_price": 0,
+                        "discount": 0
+                    }
+                ],
+                "summary": {
+                    "total_items": 0,
+                    "total_discount": 0,
+                    "subtotal": 0,
+                    "total_payment": 0,
+                    "payment_method": null,
+                    "change": 0,
+                    "dpp": 0,
+                    "ppn": 0
+                }
+            }
+        }
+        PROMPT;
+
+        $payload = $extension === 'pdf' ? [
+            'model' => $model ?: 'gpt-4.1',
+            'input' => [
+                [
+                    'role' => 'user',
+                    'content' => [
+                        [
+                            'type' => 'input_text',
+                            'text' => $prompt,
+                        ],
+                        [
+                            'type' => 'input_file',
+                            'file_url' => $document,
                         ],
                     ],
                 ],
-            ]);
+            ],
+        ] : [
+            'model' => $model ?: 'gpt-4.1',
+            'input' => [
+                [
+                    'role' => 'user',
+                    'content' => [
+                        [
+                            'type' => 'input_text',
+                            'text' => $prompt,
+                        ],
+                        [
+                            'type' => 'input_image',
+                            'image_url' => $document,
+                        ],
+                    ],
+                ],
+            ],
+        ];
 
+        $response = OpenAI::responses()->create($payload);
 
         return $response;
     }

@@ -17,17 +17,11 @@ class Detail extends Component
     public float $item_unit_price = 0.00;
     public float $item_discount = 0.00;
 
-    protected $listeners = [
-        'showExpenseDetail' => 'loadReceipt',
-    ];
-
-    public function updatedReceiptId($value): void
+    public function mount(Receipt $receipt): void
     {
-        if ($value) {
-            $this->loadReceipt($value);
-        }
+        $this->receipt = $receipt;
     }
-
+    
     protected function rules(): array
     {
         return [
@@ -47,7 +41,7 @@ class Detail extends Component
     {
         $this->validate();
 
-        $item = ReceiptItem::create([
+        ReceiptItem::create([
             'receipt_id' => $this->receipt->id,
             'name' => $this->item_name,
             'quantity' => $this->item_quantity,
@@ -56,9 +50,9 @@ class Detail extends Component
             'discount' => $this->item_discount,
         ]);
 
-        // update counters on receipt
-        $this->receipt->refresh();
-    $this->dispatch('expenseUpdated');
+        $this->recalculateReceiptSummary();
+
+        $this->dispatch('expenseUpdated');
         $this->resetItemForm();
     }
 
@@ -86,8 +80,9 @@ class Detail extends Component
             'discount' => $this->item_discount,
         ]);
 
-        $this->receipt->refresh();
-    $this->dispatch('expenseUpdated');
+        $this->recalculateReceiptSummary();
+
+        $this->dispatch('expenseUpdated');
         $this->resetItemForm();
     }
 
@@ -98,6 +93,50 @@ class Detail extends Component
         $this->item_quantity = 1;
         $this->item_unit_price = 0.00;
         $this->item_discount = 0.00;
+    }
+
+    public function deleteItem(int $id): void
+    {
+        $item = ReceiptItem::where('receipt_id', $this->receipt?->id)
+            ->whereKey($id)
+            ->first();
+
+        if (! $item) {
+            return;
+        }
+
+        $item->delete();
+
+        if ($this->item_id === $id) {
+            $this->resetItemForm();
+        }
+
+        $this->recalculateReceiptSummary();
+
+        $this->dispatch('expenseUpdated');
+    }
+
+    protected function recalculateReceiptSummary(): void
+    {
+        if (! $this->receipt) {
+            return;
+        }
+
+        $this->receipt->loadMissing('items');
+
+        $totalItems = (int) $this->receipt->items->sum('quantity');
+        $subtotal = (float) $this->receipt->items->sum('total_price');
+        $totalDiscount = (float) $this->receipt->items->sum('discount');
+        $totalPayment = max($subtotal - $totalDiscount, 0);
+
+        $this->receipt->update([
+            'total_items' => $totalItems,
+            'subtotal' => $subtotal,
+            'total_discount' => $totalDiscount,
+            'total_payment' => $totalPayment,
+        ]);
+
+        $this->receipt->refresh();
     }
 
     public function render()

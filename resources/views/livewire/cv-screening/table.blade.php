@@ -56,7 +56,7 @@
 
                         <td class="px-4 py-3">{{ $cv->created_at->diffForHumans() }}</td>
                         <td class="px-4 py-3 text-nowrap">
-                            <flux:button size="sm" variant="primary" :href="route('cv-screening.show', $cv)" icon="eye"></flux:button>
+                            <flux:button size="sm" variant="primary" :href="route('cv-screening.show', $cv)" icon="eye" wire:navigate></flux:button>
                             <flux:button size="sm" variant="danger" wire:click="confirmDelete('{{ $cv->id }}')" icon="trash"></flux:button>
                         </td>
                     </tr>

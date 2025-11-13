@@ -11,8 +11,8 @@
             <flux:sidebar.header class="w-full z-10 bg-zinc-50 dark:bg-zinc-900">
                 <flux:sidebar.brand
                     href="#"
-                    logo="https://ai-playground-app.test/logo.jpeg"
-                    logo:dark="https://ai-playground-app.test/logo.jpeg"
+                    logo="https://ai-playground-app.test/logo.png"
+                    logo:dark="https://ai-playground-app.test/logo.png"
                     name="{{ config('app.name') }}"
                 />
      
@@ -105,7 +105,7 @@
                 <flux:navbar scrollable>
                     <flux:sidebar.item icon="document-magnifying-glass" :href="route('documents.index')" :current="request()->routeIs('documents.index')" wire:navigate>{{ __('Document Verifier') }}</flux:sidebar.item>
                     <flux:sidebar.item icon="document-text" :href="route('cv-screening.index')" :current="request()->routeIs('cv-screening.index')" wire:navigate>{{ __('CV Screening') }}</flux:sidebar.item>
-                    <flux:navbar.item icon="banknotes" href="#">Expense Tracker</flux:navbar.item>
+                    <flux:sidebar.item icon="banknotes" :href="route('expenses.index')" :current="request()->routeIs('expenses.index')" wire:navigate>{{ __('Expense Tracker') }}</flux:sidebar.item>
                 </flux:navbar>
                 
                 <flux:spacer />

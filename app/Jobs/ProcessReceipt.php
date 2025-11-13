@@ -21,6 +21,8 @@ class ProcessReceipt implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public string $documentId;
+
+    public ?string $extension = null;
     /**
      * Number of attempts. Set to null to allow retrying until retryUntil() expires.
      * We'll use retryUntil() to control how long we want to keep retrying.
@@ -45,9 +47,10 @@ class ProcessReceipt implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    public function __construct(string $documentId)
+    public function __construct(string $documentId, ?string $extension = null)
     {
         $this->documentId = $documentId;
+        $this->extension = $extension;
     }
 
     /**
@@ -65,7 +68,7 @@ class ProcessReceipt implements ShouldQueue
         // mark as in progress
         $document->update(['status' => ResponseStatus::InProgress]);
 
-        $response = $aiService->createReceiptResponse($document->file_url);
+        $response = $aiService->createReceiptResponse($document->file_url, $this->extension);
 
         // attempt to parse AI response and persist to receipts + receipt_items
         try {
@@ -80,11 +83,12 @@ class ProcessReceipt implements ShouldQueue
 
                     // determine receipt attributes
                     $receiptNo = $txn['receipt_no'] ?? null;
+                    $currency = $txn['currency'] ?? null;
                     $transactionDate = null;
                     if (! empty($txn['date'])) {
                         // try parse as datetime
                         try {
-                            $transactionDate = \Carbon\Carbon::parse($txn['date']);
+                            $transactionDate = \Carbon\Carbon::parse($txn['date'].$txn['time']);
                         } catch (\Throwable $e) {
                             $transactionDate = null;
                         }
@@ -93,6 +97,7 @@ class ProcessReceipt implements ShouldQueue
                     $receiptAttrs = [
                         'store_name' => $payload['store']['name'] ?? null,
                         'receipt_no' => $receiptNo,
+                        'currency' => $currency,
                         'transaction_date' => $transactionDate,
                         'total_items' => $txn['summary']['total_items'] ?? null,
                         'total_discount' => $txn['summary']['total_discount'] ?? null,
