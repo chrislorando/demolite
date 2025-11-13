@@ -1,10 +1,9 @@
 <?php
 
-
+use App\Livewire\Chat\SharedConversation as SharedConversationComponent;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 use Livewire\Volt\Volt;
-use App\Livewire\Chat\SharedConversation as SharedConversationComponent;
 use OpenAI\Laravel\Facades\OpenAI;
 
 Route::get('/', function () {
@@ -54,7 +53,7 @@ Route::middleware(['auth'])->group(function () {
 // Public route for shared conversations
 Route::get('/shared/{token}', SharedConversationComponent::class)->name('chat.shared.show');
 
-Route::get('documents', \App\Livewire\DocumentVerifier\Index::class)
+Route::get('documents-verifier', \App\Livewire\DocumentVerifier\Index::class)
     ->middleware(['auth', 'verified'])
     ->name('documents.index');
 
@@ -75,15 +74,15 @@ Route::get('cv-screening/{cv}', \App\Livewire\CvScreening\View::class)
     ->name('cv-screening.show');
 
 Route::get('/pdf', function () {
- $response = OpenAI::responses()->create([
-            'model' => 'gpt-4o-mini',
-            'input' => [
-                [
-                    'role' => 'user',
-                    'content' => [
-                        [
-                            'type' => 'input_text',
-                            'text' => "
+    $response = OpenAI::responses()->create([
+        'model' => 'gpt-4o-mini',
+        'input' => [
+            [
+                'role' => 'user',
+                'content' => [
+                    [
+                        'type' => 'input_text',
+                        'text' => "
                                 You are a document validator. This document can contain various types of forms or letters.
                                 Your task:
                                 1. Identify information or sections that appear to be mandatory in context (e.g., the applicant's name, signature, date, identification number, or sections that are mentioned but are blank).
@@ -92,31 +91,31 @@ Route::get('/pdf', function () {
                                 3. Return the results in the following JSON format:
                                 [
                                     {\"page\": <page number>, \"section\": \"<section or sentence>\", \"issue\": \"<problem>\", \"suggestion\": \"<what needs to be improved>\"}
-                                ]"
-                        
-                        ],
-                        [
-                            'type' => 'input_file',
-                            'file_url' => 'https://s3.demolite.my.id/demolite/employee_form_sample.pdf',
-                        ],
+                                ]",
+
+                    ],
+                    [
+                        'type' => 'input_file',
+                        'file_url' => 'https://s3.demolite.my.id/demolite/employee_form_sample.pdf',
                     ],
                 ],
             ],
-        ]);
+        ],
+    ]);
 
-        dd($response);
+    dd($response);
 });
 
 Route::get('/cv', function () {
     $response = OpenAI::responses()->create([
-            'model' => 'gpt-4o-mini',
-            'input' => [
-                [
-                    'role' => 'user',
-                    'content' => [
-                        [
-                            'type' => 'input_text',
-                            'text' => <<<PROMPT
+        'model' => 'gpt-4o-mini',
+        'input' => [
+            [
+                'role' => 'user',
+                'content' => [
+                    [
+                        'type' => 'input_text',
+                        'text' => <<<'PROMPT'
                                         Compare this CV with the following job description:
 
                                         Job Description:
@@ -143,15 +142,50 @@ Route::get('/cv', function () {
                                         }
                                         PROMPT
 
-                        ],
-                        [
-                            'type' => 'input_file',
-                            'file_url' => 'https://s3.demolite.my.id/demolite/cv/Chris_Manuel_Lorando_-_Full_Stack_Web_Developer_-_20250414.pdf',
-                        ],
+                    ],
+                    [
+                        'type' => 'input_file',
+                        'file_url' => 'https://s3.demolite.my.id/demolite/cv/Chris_Manuel_Lorando_-_Full_Stack_Web_Developer_-_20250414.pdf',
                     ],
                 ],
             ],
-        ]);
+        ],
+    ]);
 
-        dd($response);
+    dd($response);
+});
+
+Route::get('/website', function () {
+    $response = OpenAI::responses()->create([
+        'model' => 'gpt-4.1',
+        'input' => [
+            [
+                'role' => 'user',
+                'content' => [
+                    [
+                        'type' => 'input_text',
+                        'text' => '
+                                You are a web content extractor. Your task is to read the provided URL and return the main job posting information in structured JSON format. Extract only the information explicitly present on the page. Do not infer anything. Include the following fields if available:
+
+                                - job_title
+                                - company_name
+                                - location
+                                - job_description
+                                - requirements
+                                - salary
+                                - employment_type
+                                - date_posted
+                                - application_link
+
+                                URL: https://www.seek.com.au/job/88391258?tracking=SHR-AND-SharedJob-anz-1
+',
+
+                    ],
+
+                ],
+            ],
+        ],
+    ]);
+
+    dd($response);
 });
