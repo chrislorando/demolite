@@ -7,7 +7,7 @@ it('shows documents page to authenticated user', function () {
     $user = User::factory()->create();
 
     actingAs($user)
-        ->get('/documents')
+        ->get('/documents-verifier')
         ->assertSuccessful()
         ->assertSeeText('Documents');
 });
