@@ -14,6 +14,7 @@
             <table class="min-w-full text-sm">
                 <thead class="bg-zinc-50 dark:bg-zinc-800">
                     <tr>
+                        <th class="px-4 py-2 text-center">#</th>
                         <th class="px-4 py-2 text-left">Job Position</th>
                         <th class="px-4 py-2 text-left">Skill</th>
                         <th class="px-4 py-2 text-left">Experience</th>
@@ -22,12 +23,13 @@
                         <th class="px-4 py-2 text-left">Recommended</th>
                         <th class="px-4 py-2 text-left">Status</th>
                         <th class="px-4 py-2 text-left">Uploaded</th>
-                        <th class="px-4 py-2 text-left">Actions</th>
+                        <th class="px-4 py-2 text-center">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     @forelse($cvs as $cv)
                     <tr class="border-t border-zinc-100 dark:border-zinc-800">
+                        <td class="px-4 py-3 text-center">{{ $loop->iteration }}</td>
                         <td class="px-4 py-3">
                            {{ $cv->job_position ?? '-' }}
                         </td>
@@ -55,9 +57,9 @@
                         </td>
 
                         <td class="px-4 py-3">{{ $cv->created_at->diffForHumans() }}</td>
-                        <td class="px-4 py-3 text-nowrap">
-                            <flux:button size="sm" variant="primary" :href="route('cv-screening.show', $cv)" icon="eye" wire:navigate></flux:button>
-                            <flux:button size="sm" variant="danger" wire:click="confirmDelete('{{ $cv->id }}')" icon="trash"></flux:button>
+                        <td class="px-4 py-3 text-center">
+                            <flux:button size="xs" variant="primary" :href="route('cv-screening.show', $cv)" icon="eye" wire:navigate></flux:button>
+                            <flux:button size="xs" variant="danger" wire:click="confirmDelete('{{ $cv->id }}')" icon="trash"></flux:button>
                         </td>
                     </tr>
                     @empty

@@ -18,8 +18,8 @@
             </flux:field>
 
             <flux:field>
-                <flux:label>Job Offer (link or text)</flux:label>
-                <flux:textarea wire:model="job_offer" rows="4" description="Better result with text." />
+                <flux:label>Job Offer Description</flux:label>
+                <flux:textarea wire:model="job_offer" rows="4" placeholder="Fullstack engineer position at a tech company..." />
                 {{-- <flux:error name="job_offer" /> --}}
             </flux:field>
 
