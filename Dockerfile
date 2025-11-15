@@ -53,11 +53,14 @@ RUN composer install --optimize-autoloader --no-interaction
 # RUN NODE_OPTIONS=--max_old_space_size=1024 npm run build
 
 RUN mkdir -p storage/framework/{cache,sessions,testing,views} \
+    && mkdir -p storage/logs/ \
+    && touch storage/logs/laravel.log \
     && mkdir -p database/ \
     && touch database/database.sqlite \
     && chown -R www-data:www-data storage bootstrap/cache database \
     && chmod -R 775 storage bootstrap/cache database \
-    && chmod 664 database/database.sqlite
+    && chmod 664 database/database.sqlite \
+    && chmod 664 storage/logs/laravel.log \
 
 # Copy supervisord config
 COPY ./docker/gptdome-worker.conf /etc/supervisor/conf.d/gptdome-worker.conf
