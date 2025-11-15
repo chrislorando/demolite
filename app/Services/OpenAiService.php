@@ -395,4 +395,30 @@ class OpenAiService implements AiServiceInterface
 
         return $response;
     }
+
+    public function formatTranscript(string $rawTranscript): string
+    {
+        $response = OpenAI::chat()->create([
+            'model' => 'gpt-4o-mini',
+            'messages' => [
+                [
+                    'role' => 'system',
+                    'content' => 'You are a helpful assistant that formats voice transcripts into structured notes.',
+                ],
+                [
+                    'role' => 'user',
+                    'content' => "Analyze this transcript and extract:
+                                    1. A clear summary (2-3 sentences or 1-2 paragraphs depending on length)
+                                    2. Key points (as bullet points)
+                                    3. Action items with due dates if mentioned (format: 'Action: [task] | Due: [date or 'Not specified']')
+
+                                    Format the output clearly with headers.
+
+                                    Transcript: {$rawTranscript}",
+                ],
+            ],
+        ]);
+
+        return $response->choices[0]->message->content;
+    }
 }

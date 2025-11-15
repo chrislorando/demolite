@@ -12,7 +12,7 @@ This project serves both as a learning medium to deepen my understanding of mode
 - Document verifier
 - CV/Resume analysis and feedback
 - Expense tracker
-- Search conversations
+- Voice Notes
 - Real-time chat updates with Livewire stream
 - Responsive UI with TailwindCSS and Flux UI
 
@@ -65,6 +65,10 @@ This project serves both as a learning medium to deepen my understanding of mode
    php artisan serve
    ```
 
+9. Start queue:
+   ```
+   php artisan queue:listen
+   ```
 
 ## Usage
 
