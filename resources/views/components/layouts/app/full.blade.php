@@ -4,7 +4,7 @@
     <head>
         @include('partials.head')
     </head>
-    <body class="md:flex min-h-screen bg-white dark:bg-zinc-800 {{ request()->routeIs('chat.bot-ai.show') ? 'overflow-hidden' : '' }}">
+    <body class="md:flex min-h-screen bg-white dark:bg-zinc-800 {{ request()->routeIs('chat.bot-ai.show') || request()->routeIs('transcribe.create') ? 'overflow-hidden' : '' }}">
 
         <!-- Sidebar -->
         <flux:sidebar sticky collapsible class="h-screen w-64 border-e border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900 px-2">
@@ -106,6 +106,7 @@
                     <flux:sidebar.item icon="document-magnifying-glass" :href="route('documents.index')" :current="request()->routeIs('documents.index')" wire:navigate>{{ __('Document Verifier') }}</flux:sidebar.item>
                     <flux:sidebar.item icon="document-text" :href="route('cv-screening.index')" :current="request()->routeIs('cv-screening.index')" wire:navigate>{{ __('CV Screening') }}</flux:sidebar.item>
                     <flux:sidebar.item icon="banknotes" :href="route('expenses.index')" :current="request()->routeIs('expenses.index')" wire:navigate>{{ __('Expense Tracker') }}</flux:sidebar.item>
+                    <flux:sidebar.item icon="microphone" :href="route('transcribe.index')" :current="request()->routeIs('transcribe.index')" wire:navigate>{{ __('Transcribe') }}</flux:sidebar.item>
                 </flux:navbar>
                 
                 <flux:spacer />

@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>GPT Dome - AI Playground — Free AI model sandbox</title>
+    <title>GPT Dome - AI Playground — Free and open source</title>
 
     <link rel="icon" href="/favicon.ico" sizes="any">
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
@@ -84,7 +84,7 @@
                         <span class="inline-block size-3 rounded-full bg-neutral-200 dark:bg-zinc-800"></span>
                         <span class="inline-block size-3 rounded-full bg-neutral-200 dark:bg-zinc-800"></span>
                     </div>
-                    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-2">
                         <figure class="rounded-md border border-zinc-200 dark:border-zinc-700 overflow-hidden bg-zinc-950/5 dark:bg-zinc-50/5">
                             <img src="{{ asset('screenshot1.png') }}" alt="Document Verifier interface preview" class="w-full object-contain" />
                             <figcaption class="px-4 py-3 text-sm text-zinc-600 dark:text-zinc-400">
@@ -101,6 +101,12 @@
                             <img src="{{ asset('screenshot3.png') }}" alt="Expense Tracker dashboard preview" class="w-full object-contain" />
                             <figcaption class="px-4 py-3 text-sm text-zinc-600 dark:text-zinc-400">
                                 Expense Tracker — capture receipts and see monthly spending summaries powered by AI extraction.
+                            </figcaption>
+                        </figure>
+                        <figure class="rounded-md border border-zinc-200 dark:border-zinc-700 overflow-hidden bg-zinc-950/5 dark:bg-zinc-50/5">
+                            <img src="{{ asset('screenshot4.png') }}" alt="Voice Note dashboard preview" class="w-full object-contain" />
+                            <figcaption class="px-4 py-3 text-sm text-zinc-600 dark:text-zinc-400">
+                                Voice Note — record voice notes and get AI-generated transcripts and action items.
                             </figcaption>
                         </figure>
                     </div>
