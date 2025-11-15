@@ -60,7 +60,7 @@ RUN mkdir -p storage/framework/{cache,sessions,testing,views} \
     && chown -R www-data:www-data storage bootstrap/cache database \
     && chmod -R 775 storage bootstrap/cache database \
     && chmod 664 database/database.sqlite \
-    && chmod 664 storage/logs/laravel.log \
+    && chmod 664 storage/logs/laravel.log
 
 # Copy supervisord config
 COPY ./docker/gptdome-worker.conf /etc/supervisor/conf.d/gptdome-worker.conf
