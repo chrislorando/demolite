@@ -65,6 +65,9 @@ RUN mkdir -p storage/framework/{cache,sessions,testing,views} \
 # Copy supervisord config
 COPY ./docker/gptdome-worker.conf /etc/supervisor/conf.d/gptdome-worker.conf
 
+# Copy custom php.ini configuration
+COPY ./docker/php/custom.ini /usr/local/etc/php/conf.d/custom.ini
+
 RUN echo "[supervisord]\nnodaemon=true\nuser=root\n\n[include]\nfiles=/etc/supervisor/conf.d/*.conf" > /etc/supervisor/supervisord.conf
 
 EXPOSE 9000
