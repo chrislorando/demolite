@@ -73,6 +73,23 @@ Route::get('cv-screening/{cv}', \App\Livewire\CvScreening\View::class)
     ->middleware(['auth', 'verified'])
     ->name('cv-screening.show');
 
+Route::get('transcribe', \App\Livewire\Transcribe\Index::class)
+    ->middleware(['auth', 'verified'])
+    ->name('transcribe.index');
+
+Route::get('transcribe/create', \App\Livewire\Transcribe\Form::class)
+    ->middleware(['auth', 'verified'])
+    ->name('transcribe.create');
+
+Route::get('transcribe/{voiceNote}', \App\Livewire\Transcribe\Detail::class)
+    ->middleware(['auth', 'verified'])
+    ->name('transcribe.show');
+
+
+Route::post('voice-note/transcribe-chunk', [\App\Http\Controllers\VoiceNoteController::class, 'transcribeChunk'])
+    ->middleware(['auth'])
+    ->name('voice-note.transcribe-chunk');
+
 Route::get('/pdf', function () {
     $response = OpenAI::responses()->create([
         'model' => 'gpt-4o-mini',
