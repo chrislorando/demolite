@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: gptdome-app-${COMPOSE_PROJECT_NAME}
+    volumes:
+      - gptdome-public:/var/www/public
+      - gptdome-conf:/var/www/docker/nginx/conf.d
+    ports:
+      - '6003:6003'
+    networks:
+      - gptdome-network
+
+  webserver:
+    image: nginx:alpine
+    container_name: gptdome-nginx-${COMPOSE_PROJECT_NAME}
+    ports:
+      - '8085:80'
+    volumes:
+      - gptdome-public:/var/www/public
+      - gptdome-conf:/etc/nginx/conf.d
+    depends_on:
+      - app
+    networks:
+      - gptdome-network
+
+volumes:
+  gptdome-public:
+  gptdome-conf:
+
+networks:
+  gptdome-network:
+    driver: bridge
