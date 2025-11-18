@@ -11,8 +11,8 @@
             <flux:sidebar.header class="w-full z-10 bg-zinc-50 dark:bg-zinc-900">
                 <flux:sidebar.brand
                     href="#"
-                    logo="https://ai-playground-app.test/logo.png"
-                    logo:dark="https://ai-playground-app.test/logo.png"
+                    logo="{{ asset('logo.png') }}"
+                    logo:dark="{{ asset('logo.png') }}"
                     name="{{ config('app.name') }}"
                 />
      

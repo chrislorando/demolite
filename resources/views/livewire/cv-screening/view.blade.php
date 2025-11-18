@@ -23,7 +23,7 @@
             </div>
 
             @if($cv->job_position)
-                <div class="mt-6 rounded-lg border border-zinc-100 bg-zinc-50/70 p-4 dark:border-zinc-800 dark:bg-zinc-800/40">
+                <div class="mt-4 rounded-lg border border-zinc-100 bg-zinc-50/70 p-4 dark:border-zinc-800 dark:bg-zinc-800/40">
                     <dt class="text-xs uppercase tracking-wide text-zinc-500 dark:text-zinc-400 mb-2">Job Position</dt>
                     <dd class="text-sm text-zinc-900 dark:text-white whitespace-pre-wrap">{{ $cv->job_position }}</dd>
                 </div>
@@ -35,7 +35,7 @@
                     $rawOffer = trim((string)($cv->job_offer ?? ''));
                     $paragraphs = preg_split('/\r?\n\s*\r?\n/', $rawOffer);
                     $paragraphs = $paragraphs === false ? [] : array_filter(array_map('trim', $paragraphs));
-                    $visibleCount = 3;
+                    $visibleCount = 1;
                 @endphp
                 @if(empty($paragraphs))
                     <dd class="text-sm text-zinc-900 dark:text-white">-</dd>
