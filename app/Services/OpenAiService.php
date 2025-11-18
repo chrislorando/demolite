@@ -12,25 +12,16 @@ use Throwable;
 
 class OpenAiService implements AiServiceInterface
 {
+    public function __construct(
+        protected ChatService $chatService
+    ) {}
+
     public function sendMessageWithStream(string $conversationId, string $content, callable $onChunk, ?string $model = null)
     {
         $model = $model ?? 'gpt-4o-mini';
-        $conversation = Conversation::findOrFail($conversationId);
+        $personalization = $this->chatService->getPersonalizationForConversation($conversationId);
+        $messages = $this->chatService->getConversationMessages($conversationId);
 
-        // Get user personalization (only active ones)
-        $personalization = $conversation->user->personalization()->where('status', 'active')->first();
-
-        // Get all messages for context
-        $messages = $conversation->items()
-            ->orderBy('created_at')
-            ->get()
-            ->map(fn (ConversationItem $message) => [
-                'role' => $message->role,
-                'content' => $message->content,
-            ])
-            ->toArray();
-
-        // Create system prompt with personalization
         $systemPrompt = [
             'role' => 'system',
             'content' => <<<SYS
@@ -46,23 +37,22 @@ class OpenAiService implements AiServiceInterface
                 SYS
         ];
 
-        // Save assistant message
-        $chatService = app(ChatService::class);
-        $responseId = null; // Initialize responseId
-        $assistantMessage = $chatService->createAssistantMessage($conversationId, '', $model, $responseId);
-
-        // Set status to in_progress before streaming
+        $responseId = null;
+        $assistantMessage = $this->chatService->createAssistantMessage($conversationId, '', $model, $responseId);
         $assistantMessage->update(['status' => ResponseStatus::InProgress]);
 
         try {
             Log::info('Starting OpenAI streaming', ['messages_count' => count($messages)]);
-            // Call OpenAI API with streaming using createStreamed()
-            $stream = OpenAI::chat()->createStreamed([
+            // Use Responses Resource for streaming
+            // Flatten system prompt and messages to a single string for input
+            $inputString = $systemPrompt['content'] . "\n\n" . collect($messages)->map(fn($m) => $m['role'] . ': ' . $m['content'])->implode("\n");
+            Log::debug('OpenAI inputString', ['input' => $inputString]);
+            $stream = OpenAI::responses()->createStreamed([
                 'model' => $model,
-                'messages' => array_merge([$systemPrompt], $messages ?? $content),
-                'stream_options' => [
-                    'include_usage' => true,
-                ],
+                'input' => $inputString,
+                'stream' => true,
+                'temperature' => 0.7,
+                'max_output_tokens' => 2048,
             ]);
 
             $assistantContent = '';
@@ -70,32 +60,39 @@ class OpenAiService implements AiServiceInterface
             $finalUsage = null;
 
             foreach ($stream as $response) {
-                if ($response->usage !== null) {
-                    $finalUsage = $response->usage;
+                $event = $response->event ?? null;
+                $payload = (array) $response->toArray();
+                Log::debug('OpenAI streamed event', ['event' => $event, 'payload' => $payload]);
+
+                // Usage
+                if (isset($payload['usage'])) {
+                    $finalUsage = (array) $payload['usage'];
+                }
+                // Response ID
+                if ($responseId === null && isset($payload['id'])) {
+                    $responseId = $payload['id'];
                 }
 
-                if ($responseId === null && isset($response->id)) {
-                    $responseId = $response->id;
-                }
-                $chunk = $response->choices[0]->delta->content ?? '';
-                if ($chunk) {
-                    $assistantContent .= $chunk;
+                // Stream output_text.delta events
+                if ($event === 'response.output_text.delta' && isset($payload['data']['delta'])) {
+                    $delta = $payload['data']['delta'];
+                    $assistantContent .= $delta;
                     $chunkCount++;
-                    // Log::info("Chunk {$chunkCount}: " . substr($chunk, 0, 50) . '...');
-                    $onChunk($chunk);
+                    $onChunk($delta);
                 }
             }
 
             Log::info("Streaming completed with {$chunkCount} chunks, total content length: ".strlen($assistantContent));
 
-            // Update status to completed and set content and response_id
-            $assistantMessage->update(['status' => ResponseStatus::Completed, 'content' => $assistantContent, 'response_id' => $responseId, 'total_token' => $finalUsage?->totalTokens ?? 0]);
+            $assistantMessage->update([
+                'status' => ResponseStatus::Completed,
+                'content' => $assistantContent,
+                'response_id' => $responseId,
+                'total_token' => $finalUsage['totalTokens'] ?? 0
+            ]);
         } catch (Throwable $e) {
-            // Update status to failed on error
             $assistantMessage->update(['status' => ResponseStatus::Failed]);
-
-            Log::info($messages);
-
+            Log::info(json_encode($messages));
             $errorMessage = 'Failed to get response from OpenAI: '.$e->getMessage();
 
             if (str_contains($e->getMessage(), 'API key') || str_contains($e->getMessage(), 'api_key')) {
@@ -398,27 +395,15 @@ class OpenAiService implements AiServiceInterface
 
     public function formatTranscript(string $rawTranscript): string
     {
-        $response = OpenAI::chat()->create([
+        $prompt = "You are a helpful assistant that formats voice transcripts into structured notes.\n\nAnalyze this transcript and extract:\n1. A clear summary (2-3 sentences or 1-2 paragraphs depending on length)\n2. Key points (as bullet points)\n3. Action items with due dates if mentioned (format: 'Action: [task] | Due: [date or 'Not specified']')\n\nFormat the output clearly with headers.\n\nTranscript: {$rawTranscript}";
+
+        $response = OpenAI::responses()->create([
             'model' => 'gpt-4o-mini',
-            'messages' => [
-                [
-                    'role' => 'system',
-                    'content' => 'You are a helpful assistant that formats voice transcripts into structured notes.',
-                ],
-                [
-                    'role' => 'user',
-                    'content' => "Analyze this transcript and extract:
-                                    1. A clear summary (2-3 sentences or 1-2 paragraphs depending on length)
-                                    2. Key points (as bullet points)
-                                    3. Action items with due dates if mentioned (format: 'Action: [task] | Due: [date or 'Not specified']')
-
-                                    Format the output clearly with headers.
-
-                                    Transcript: {$rawTranscript}",
-                ],
-            ],
+            'input' => $prompt,
         ]);
 
-        return $response->choices[0]->message->content;
+        // Output is in $response->output[0]['content'][0]['text']
+        $output = $response->output[0]['content'][0]['text'] ?? '';
+        return $output;
     }
 }

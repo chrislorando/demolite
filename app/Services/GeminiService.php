@@ -2,57 +2,31 @@
 
 namespace App\Services;
 
-use App\Models\Conversation;
-use App\Models\ConversationItem;
+use App\Services\ChatService;
 use Exception;
 use Log;
 use Throwable;
 
 class GeminiService implements AiServiceInterface
 {
-    public function sendMessageWithStream(string $conversationId, string $content, callable $onChunk)
-    {
-        $conversation = Conversation::findOrFail($conversationId);
+    public function __construct(
+        protected ChatService $chatService
+    ) {}
 
-        // Get all messages for context
-        $messages = $conversation->items()
-            ->orderBy('created_at')
-            ->get()
-            ->map(fn (ConversationItem $message) => [
-                'role' => $message->role,
-                'content' => $message->content,
-            ])
-            ->toArray();
+    public function sendMessageWithStream(string $conversationId, string $content, callable $onChunk, ?string $model = null)
+    {
+        $messages = $this->chatService->getConversationMessages($conversationId);
 
         try {
             Log::info('Starting Gemini streaming', ['messages_count' => count($messages)]);
 
             // TODO: Implement Gemini API streaming
-            // This is a placeholder implementation
-            // You would need to install Google AI SDK and configure API key
-            //
-            // Example:
-            // use Google\AI\Client;
-            //
-            // $client = new Client(['apiKey' => config('services.gemini.api_key')]);
-            // $response = $client->generateContent([
-            //     'contents' => $messages,
-            //     'generationConfig' => [
-            //         'temperature' => 0.7,
-            //         'maxOutputTokens' => 2048,
-            //     ],
-            // ]);
-            //
-            // For streaming, you would use streamingGenerateContent() method
-
-            // Placeholder: simulate streaming for now
             $assistantContent = "This is a placeholder response from Gemini. Please implement the actual Gemini API integration.";
 
-            // Simulate chunked response
             $chunks = str_split($assistantContent, 10);
             foreach ($chunks as $chunk) {
                 $onChunk($chunk);
-                usleep(50000); // 50ms delay to simulate streaming
+                usleep(50000);
             }
 
             Log::info("Gemini streaming simulation completed");
@@ -72,12 +46,25 @@ class GeminiService implements AiServiceInterface
             throw new Exception($errorMessage);
         }
 
-        // Save assistant message
-        $assistantMessage = $conversation->items()->create([
-            'role' => 'assistant',
-            'content' => $assistantContent,
-        ]);
-
+        $assistantMessage = $this->chatService->createAssistantMessage($conversationId, $assistantContent);
         return $assistantMessage;
+    }
+
+    public function createDocumentResponse(string $document, ?string $instruction = null, ?string $model = null)
+    {
+        // TODO: Implement Gemini document response logic
+        throw new \Exception('Not implemented');
+    }
+
+    public function createCvScreeningResponse(string $document, ?string $jobOffer = null, ?string $model = null)
+    {
+        // TODO: Implement Gemini CV screening response logic
+        throw new \Exception('Not implemented');
+    }
+
+    public function createReceiptResponse(string $document, string|null $extension = null, ?string $model = null)
+    {
+        // TODO: Implement Gemini receipt response logic
+        throw new \Exception('Not implemented');
     }
 }
