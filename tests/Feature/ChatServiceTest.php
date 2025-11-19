@@ -9,7 +9,9 @@ uses(RefreshDatabase::class);
 
 test('it can create a conversation', function () {
     $user = User::factory()->create();
-    $service = new ChatService;
+    $conversationRepository = new \App\Repositories\ConversationRepository();
+    $itemRepository = new \App\Repositories\ConversationItemRepository();
+    $service = new ChatService($conversationRepository, $itemRepository);
 
     $conversation = $service->createConversation($user->id);
 
@@ -20,7 +22,9 @@ test('it can create a conversation', function () {
 });
 
 test('it can create a conversation without user', function () {
-    $service = new ChatService;
+    $conversationRepository = new \App\Repositories\ConversationRepository();
+    $itemRepository = new \App\Repositories\ConversationItemRepository();
+    $service = new ChatService($conversationRepository, $itemRepository);
 
     $conversation = $service->createConversation();
 
@@ -31,12 +35,13 @@ test('it can create a conversation without user', function () {
 
 test('it can send a message and get response from OpenAI', function () {
     $conversation = Conversation::factory()->create();
+    $conversationRepository = new \App\Repositories\ConversationRepository();
+    $itemRepository = new \App\Repositories\ConversationItemRepository();
+    $service = new ChatService($conversationRepository, $itemRepository);
 
-    $service = new ChatService;
-    
     // Create user message
     $userMessage = $service->createUserMessage($conversation->id, 'Hello, how are you?');
-    
+
     // Create assistant message
     $assistantMessage = $service->createAssistantMessage($conversation->id, 'This is a test response from OpenAI');
 
@@ -49,8 +54,9 @@ test('it can send a message and get response from OpenAI', function () {
 
 test('it generates title from first message', function () {
     $conversation = Conversation::factory()->create(['title' => null]);
-
-    $service = new ChatService;
+    $conversationRepository = new \App\Repositories\ConversationRepository();
+    $itemRepository = new \App\Repositories\ConversationItemRepository();
+    $service = new ChatService($conversationRepository, $itemRepository);
     $service->createUserMessage($conversation->id, 'This is a very long message that should be truncated');
 
     expect($conversation->fresh()->title)->not->toBeNull()
