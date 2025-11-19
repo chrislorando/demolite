@@ -16,7 +16,6 @@ class Conversation extends Model
     protected $fillable = [
         'title',
         'user_id',
-        'summary',
     ];
 
     public function items(): HasMany

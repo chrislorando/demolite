@@ -73,4 +73,16 @@ class GeminiService implements AiServiceInterface
         // TODO: Implement Gemini receipt response logic
         throw new \Exception('Not implemented');
     }
+
+    public function fetchModels(): array
+    {   
+        // TODO: Implement Gemini fetch models logic
+        throw new \Exception('Not implemented');
+    }
+
+    public function retrieveModel(string $model): array
+    {
+        // TODO: Implement Gemini retrieve model logic
+        throw new \Exception('Not implemented');
+    }
 }

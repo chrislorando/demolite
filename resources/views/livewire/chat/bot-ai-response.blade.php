@@ -106,7 +106,7 @@
 
             <div class="my-4 relative group">
 
-                <div x-data="{ loading: true }" x-init="setTimeout(() => { loading = false }, 3000)" class="px-4 py-2 leading-8 break-words text-justify text-zinc-600 dark:text-white">
+                <div x-data="{ loading: true }" x-init="setTimeout(() => { loading = false }, 5000)" class="px-4 py-2 leading-8 break-words text-justify text-zinc-600 dark:text-white">
                     <div x-show="loading" class="animate-pulse text-zinc-400">
                         <p><flux:icon name="ellipsis-horizontal" class="inline-block w-6 h-6 animate-pulse" /></p>
                     </div>
